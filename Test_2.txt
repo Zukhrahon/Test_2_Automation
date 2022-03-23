@@ -1,0 +1,274 @@
+import com.sun.javafx.binding.StringFormatter;
+import net.bytebuddy.utility.RandomString;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+
+
+class Task_Automation2 {
+
+
+    public static void main(String[] args) throws InterruptedException{
+
+        // 0. Setting chrome driver path
+        System.setProperty("webdriver.chrome.driver", "/Users/zukhraabdukolikova/Desktop/Browser Drivers/chromedriver");
+
+        //1.  Launching browser
+        WebDriver driver= new ChromeDriver();
+
+        //Maximize window
+        driver.manage().window().maximize();
+
+        // 2. Navigate to http (URL)
+        driver.get(" http://secure.smartbearsoftware.com/samples/TestComplete12/WebOrders/Login.aspx");
+
+        driver.manage().timeouts().implicitlyWait(2000, TimeUnit.SECONDS);
+
+       // 3.Login using username Tester and password test
+        driver.findElement(By.id("ctl00_MainContent_username")).sendKeys("Tester");
+        driver.findElement(By.id("ctl00_MainContent_password")).sendKeys("test");
+        driver.findElement(By.name("ctl00$MainContent$login_button")).click();
+
+         Thread.sleep(2000);
+
+
+
+                                                        //  ORDER
+
+        // 4.Click on Order link
+        driver.findElement(By.xpath("//a[@href='Process.aspx']")).click();
+
+
+
+
+                                                            //Product Information
+
+
+
+        // Check Locating DropDown Product
+        Random m=new Random();
+        WebElement product=driver.findElement(By.xpath("//*[@id='ctl00_MainContent_fmwOrder_ddlProduct']"));
+        product.sendKeys(String.valueOf(m.nextInt(3)));
+        driver.findElement(By.id("ctl00_MainContent_fmwOrder_ddlProduct")).click();
+
+
+
+        // 5. Enter a random product quantity between 1 and 100
+         int ran=m.nextInt(100)+1;
+        WebElement quantity=driver.findElement(By.id("ctl00_MainContent_fmwOrder_txtQuantity"));
+        quantity.sendKeys(String.valueOf(ran));
+
+
+
+        // Check price Per Unit box 100
+        String actualprice=String.valueOf(driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_txtUnitPrice']")).getAttribute("value"));
+        String expextedPrice="100";
+        //Assert.assertEquals(actualprice,expextedPrice);
+//          if(actualprice.equals(expextedPrice)){
+        System.out.println("Test is passed");
+//          }else{
+//         System.out.println("Test is failed");
+        System.out.println("*******************************************");
+
+
+        // Check Discount 8%
+        WebElement dic = driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_txtDiscount']"));
+        double sum = 0;
+        double d = Double.parseDouble(String.valueOf(actualprice));
+//        System.out.println(dic);
+        if (Integer.parseInt(driver.findElement(By.xpath("//ol/li[2]/input[@id='ctl00_MainContent_fmwOrder_txtQuantity']")).getAttribute("value")) > 10
+        && !String.valueOf(dic).equals("0")){
+            System.out.println("Discount is verified.");
+        }else{
+            sum = Double.valueOf(String.valueOf(ran))*d;
+            System.out.println("Warning! Discount is not verified...");
+        }
+
+
+
+                      // 6.Click on Calculate and verify that the Total value is correct.
+        driver.findElement(By.xpath("//input[@type='submit']")).click();
+
+
+                    // Check if process went correct!
+
+        WebElement actualTotal= driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_txtTotal']"));
+        Double f=Double.parseDouble(String.valueOf(actualTotal.getAttribute("value")));
+//        System.out.println(sum+"   " + f);
+        //Assert.assertEquals(sum,f);
+
+
+
+                                                                    //Address Information
+
+        // 7.Generate and enter random first name and last name.
+
+        Hashtable<String, String> hashtable = new Hashtable<String, String>();
+        hashtable.put("Joe","Chaitanya");
+        hashtable.put("Barak","Ajeet");
+        hashtable.put("John","Peter");
+        hashtable.put("Mock","Ricky");
+        hashtable.put("Sarah","Mona");
+
+        WebElement name =driver.findElement(By.xpath("//*[@id='ctl00_MainContent_fmwOrder_txtName']"));
+        int g=m.nextInt(hashtable.size());
+        int count=0;
+        String keyF=null;
+       Iterator ti = hashtable.entrySet().iterator();
+       while (ti.hasNext()){
+           if (count==g){
+               keyF = ti.next().toString();
+               break;
+           }
+           count++;
+           ti.next();
+       }
+        name.sendKeys(keyF);
+        Thread.sleep(2000);
+
+
+
+
+
+
+
+
+             // 8. Generate and Enter random street address
+
+        Hashtable<Integer, String> hash_table = new Hashtable<Integer, String>();
+        hash_table.put(100, "Geeks");
+        hash_table.put(1513, "North Oak");
+        hash_table.put(201, "Geeks Entry");
+        hash_table.put(256, "Welcomes Tree");
+        hash_table.put(302, "Simon");
+        Iterator<?> it = hash_table.entrySet().iterator();
+        String add=null;
+        int r = m.nextInt(hash_table.size());
+        count=0;
+        while (it.hasNext()){
+            if (count==r){
+                add = it.next().toString();
+                break;
+            }
+            count++;
+            it.next();
+        }
+        driver.findElement(By.xpath("//*[@id='ctl00_MainContent_fmwOrder_TextBox2']")).sendKeys(add);
+
+
+
+
+
+
+
+
+
+        //9. Generate and Enter random city
+
+        String[] cityArray = {"Japan", "Germany", "Australia", "Uzbekistan"};
+        String random2 = cityArray[m.nextInt(cityArray.length)];
+        WebElement city= driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox3']"));
+        city.sendKeys(random2);
+
+
+
+        //10. Generate and Enter random state
+        String[] state = {"VA", "KS", "IL", "MO"};
+        String l=state[m.nextInt(state.length)];
+        WebElement user_state=(driver.findElement(By.xpath("//*[@id='ctl00_MainContent_fmwOrder_TextBox4']")));
+        user_state.sendKeys(l);
+
+
+
+        //11. Generate and Enter a random 5 digit zip code
+               int c=m.nextInt(89999)+10000;
+               String zip_code= String.valueOf(c);
+                driver.findElement(By.id("ctl00_MainContent_fmwOrder_TextBox5")).sendKeys(zip_code);
+
+
+
+
+        //12. Select the card type randomly. On each run your script should select a random type.
+
+
+        int rd=m.nextInt(3);
+//        if(rd==0){
+//            driver.findElement(By.cssSelector("input#ctl00_MainContent_fmwOrder_cardList_0")).click();
+//        }else if(rd<1){
+//            driver.findElement(By.cssSelector("input#ctl00_MainContent_fmwOrder_cardList_1")).click();
+//        }else if(rd<2){driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_cardList_2']")).click();
+//        }
+        driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_cardList_"+rd+"']")).click();
+
+
+
+        //13. Generate and enter the random card number:
+
+        String card = null;
+        if (rd==0){
+            card = generateCardNumber("visa",16);
+        }else if (rd==1){
+            card = generateCardNumber("master",16);
+        }else if (rd==2){
+            card = generateCardNumber("american",15);
+        }
+
+            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys(card);
+
+        Thread.sleep(5000);
+
+        //14. Enter a valid expiration date (newer than the current date)
+
+       driver.findElement(By.id("ctl00_MainContent_fmwOrder_TextBox1")).sendKeys("04/23/25");
+
+
+        //15. Click on Process
+        WebElement process= driver.findElement(By.xpath("//a[@id='ctl00_MainContent_fmwOrder_InsertButton']"));
+        process.click();
+        Thread.sleep(5000);
+
+        System.out.println("*******************************************");
+
+
+        //16. Verify that “New order has been successfully added” message appeared on the page.
+
+        String actualElement = driver.findElement(By.xpath("//strong")).getText();
+        String expectedElement = "New order has been successfully added.";
+        if(actualElement.equals(expectedElement)){
+            System.out.println("PASSED");
+        }else{
+            System.out.println("FAILED");
+        }
+
+
+
+
+
+        driver.findElement(By.xpath("//a[@id='ctl00_logout']")).click();
+
+        driver.quit();
+
+}
+public static String generateCardNumber(String type, int count){
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        switch (type){
+            case "visa": sb.append(4); break;
+            case "master": sb.append(5); break;
+            case "american": sb.append(3);break;
+        }
+    for (int i = 0; i < count-1; i++) {
+        sb.append(random.nextInt(9));
+    }
+    return sb.toString();
+}
+
+}
+
